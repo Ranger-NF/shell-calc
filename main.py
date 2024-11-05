@@ -1,33 +1,51 @@
 from textual.app import App, ComposeResult
 from textual.widgets import Button, Header, Static
 
-current_display_chars = ""
-supported_operation = ["+", "-", "*", "/"]
+current_display_chars: str = "0"
+supported_operations = ["+", "-", "*", "/"]
+
+names_of_symbols = {
+    "+": "add",
+
+}
 
 class CalculatorDisplay(Static):
     def on_mount(self) -> None:
         self.update(current_display_chars)
 
 class CalculatorInterface(Static):
+    previous_terms: list[int] = []
+
     def compose(self) -> ComposeResult:
 
         yield CalculatorDisplay()
         for num_on_button in range(0, 10):
             yield Button(str(num_on_button), id=f"number-{str(num_on_button)}")
 
-    def process_input(self, input_value: str):
-        if not input_value in supported_operation:
-            current_display_chars += input_value
+        # for symbol in supported_operations: # TO BE WORKED ON
+        #     yield Button(symbol, id=f"operator-{symbol}")
 
-    def on_button_pressed(self, event: Button.Pressed):
+    def add_to_term(self, input_value: str):
+        global current_display_chars
+
         display = self.query_one(CalculatorDisplay)
 
-        if event.button.id != None:
-            button_num = event.button.id.split("-")[1]
+        if current_display_chars == "0":
+            current_display_chars = input_value
+        else:
+            current_display_chars += input_value
 
-            display.update(button_num)
-        # match event.button.id:
-        #     case
+        display.update(current_display_chars)
+
+    def on_button_pressed(self, event: Button.Pressed):
+
+        if event.button.id != None:
+            button_info = event.button.id.split("-")
+            button_type = button_info[0]
+            button_char = button_info[1]
+
+            if button_type == "number":
+                self.add_to_term(button_char)
 
 class Calculator(App):
 
