@@ -2,11 +2,13 @@ from textual.app import App, ComposeResult
 from textual.widgets import Button, Header, Static
 
 current_display_chars: str = "0"
-supported_operations = ["+", "-", "*", "/"]
+supported_operations = ("+", "-", "*", "/")
 
 names_of_symbols = {
     "+": "add",
-
+    "-": "substract",
+    "*": "multiply",
+    "/": "divide"
 }
 
 class CalculatorDisplay(Static):
@@ -22,8 +24,8 @@ class CalculatorInterface(Static):
         for num_on_button in range(0, 10):
             yield Button(str(num_on_button), id=f"number-{str(num_on_button)}")
 
-        # for symbol in supported_operations: # TO BE WORKED ON
-        #     yield Button(symbol, id=f"operator-{symbol}")
+        for symbol in supported_operations: # TO BE WORKED ON
+            yield Button(symbol, id=f"operator-{names_of_symbols[symbol]}")
 
     def add_to_term(self, input_value: str):
         global current_display_chars
@@ -37,6 +39,9 @@ class CalculatorInterface(Static):
 
         display.update(current_display_chars)
 
+    def add_operation(self, operation_type):
+        pass
+
     def on_button_pressed(self, event: Button.Pressed):
 
         if event.button.id != None:
@@ -46,6 +51,8 @@ class CalculatorInterface(Static):
 
             if button_type == "number":
                 self.add_to_term(button_char)
+            elif button_type == "symbol":
+
 
 class Calculator(App):
 
