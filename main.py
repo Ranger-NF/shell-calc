@@ -16,7 +16,7 @@ class CalculatorDisplay(Static):
         self.update(current_display_chars)
 
 class CalculatorInterface(Static):
-    previous_terms: list[int] = []
+    previous_terms: list[float] = []
 
     def compose(self) -> ComposeResult:
 
@@ -40,7 +40,15 @@ class CalculatorInterface(Static):
         display.update(current_display_chars)
 
     def add_operation(self, operation_type):
-        pass
+        global current_display_chars
+        operation_symbol = next((key for key, value in names_of_symbols.items() if value == operation_type), "+")
+
+        self.previous_terms.append(float(current_display_chars))
+
+        current_display_chars += operation_symbol
+
+        display = self.query_one(CalculatorDisplay)
+        display.update(current_display_chars)
 
     def on_button_pressed(self, event: Button.Pressed):
 
@@ -51,7 +59,8 @@ class CalculatorInterface(Static):
 
             if button_type == "number":
                 self.add_to_term(button_char)
-            elif button_type == "symbol":
+            elif button_type == "operator":
+                self.add_operation(button_char)
 
 
 class Calculator(App):
